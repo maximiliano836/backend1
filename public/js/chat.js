@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const form = document.getElementById('chatForm');
   const input = document.getElementById('messageInput');
   const messages = document.getElementById('messages');
+  const disconnectBtn = document.getElementById('disconnectBtn');
 
   if (!form || !input || !messages) {
     console.warn("⚠️ No se encontraron elementos del chat en esta vista.");
@@ -41,5 +42,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     item.textContent = msg;
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
+  });
+
+  disconnectBtn.addEventListener('click', () => {
+    socket.disconnect();
+    Swal.fire({
+      title: 'Desconectado',
+      text: 'Has sido desconectado del chat.',
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
+    });
   });
 });
