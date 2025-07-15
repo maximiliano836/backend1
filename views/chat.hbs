@@ -1,0 +1,27 @@
+<section class="container">
+  <h2>💬 Chat en tiempo Real</h2>
+
+  {{#if msg}}
+    <p class="alert">{{msg}}</p>
+  {{/if}}
+
+  <div class="container logo">
+    <img src="/img/logo.png" alt="Logo">
+  </div>
+
+  <section class="container chat-container">
+    <h2>Sistema de Mensajería</h2>
+
+    <form id="chatForm">
+      <input type="text" id="messageInput" placeholder="Escriba su mensaje..." autocomplete="off">
+      <button type="submit" id="sendButton">
+        <span>📨</span>
+      </button>
+    </form>
+
+    <ul id="messages"></ul>
+  </section>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>

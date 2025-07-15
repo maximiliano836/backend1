@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="nav-brand">
+        <h1>💬 Chat App</h1>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">🏠 Inicio</a></li>
+        <li><a href="/chat" class="nav-link">💬 Chat</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    {{{body}}}
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+</body>
+</html>
