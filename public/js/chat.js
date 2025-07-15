@@ -1,5 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const socket = io();
+  let username = null;
 
   const form = document.getElementById('chatForm');
   const input = document.getElementById('messageInput');
@@ -10,11 +11,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // Pedir nombre con SweetAlert
+  const { value: name } = await Swal.fire({
+    title: '¡Bienvenido!',
+    text: 'Ingresa tu UserName para comenzar a Chatear',
+    input: 'text',
+    inputPlaceholder: 'Ingrese acá su nombre...',
+    allowOutsideClick: false,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Debes ingresar tu UserName';
+      }
+    }
+  });
+
+  username = name;
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     if (input.value.trim() !== '') {
-      socket.emit('chat message', input.value);
+      socket.emit('chat message', `${username}: ${input.value}`);
       input.value = '';
     }
   });

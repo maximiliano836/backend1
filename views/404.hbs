@@ -1,14 +1,27 @@
-<div style="text-align: center; padding: 50px;">
-  <h1 style="font-size: 3em; color: #cc0000;">404</h1>
-  <h2>{{title}}</h2>
-  <p>La página que estás buscando no existe o fue movida.</p>
-  <a href="/" style="
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  ">Volver al inicio</a>
-</div>
+<section class="container error-container">
+  <div class="error-content">
+    <div class="error-icon">
+      <span class="error-number">404</span>
+      <div class="error-emoji">😵</div>
+    </div>
+    
+    <h1 class="error-title">¡Oops! Página no encontrada</h1>
+    <p class="error-message">
+      La página que estás buscando no existe o fue movida a otro lugar.
+    </p>
+    
+    <div class="error-actions">
+      <a href="/" class="btn-primary">🏠 Volver al inicio</a>
+      <a href="/chat" class="btn-secondary">💬 Ir al chat</a>
+    </div>
+    
+    <div class="error-suggestions">
+      <p>¿Qué puedes hacer?</p>
+      <ul>
+        <li>Verificar la URL que ingresaste</li>
+        <li>Regresar a la página de inicio</li>
+        <li>Unirte al chat en tiempo real</li>
+      </ul>
+    </div>
+  </div>
+</section>
