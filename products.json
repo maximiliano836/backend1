@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "title": "Auriculares Bluetooth",
+    "description": "Auriculares inalámbricos con cancelación de ruido y batería de larga duración.",
+    "code": "AUR-001",
+    "price": 3500,
+    "status": true,
+    "stock": 25,
+    "category": "Electrónica",
+    "thumbnails": [
+      "/img/auriculares1.png"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado mecánico con retroiluminación RGB y switches azules.",
+    "code": "TEC-002",
+    "price": 7800,
+    "status": true,
+    "stock": 15,
+    "category": "Periféricos",
+    "thumbnails": [
+      "/img/teclado1.png"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Mouse Gamer",
+    "description": "Mouse óptico para gaming con 7 botones programables.",
+    "code": "MOU-003",
+    "price": 4200,
+    "status": true,
+    "stock": 30,
+    "category": "Periféricos",
+    "thumbnails": [
+      "/img/mouse1.png"
+    ]
+  }
+]

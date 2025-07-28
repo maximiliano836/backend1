@@ -1,0 +1,28 @@
+
+<section class="container" style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(102,126,234,0.08); padding: 2rem 2.5rem;">
+  <h1 style="color: #667eea; text-align: center; margin-bottom: 1.5rem;">🛒 Productos en Tiempo Real</h1>
+  <ul id="product-list" style="list-style: none; padding: 0; margin-bottom: 2rem;"></ul>
+
+  <div style="margin-bottom: 2rem;">
+    <h2 style="color: #764ba2; font-size: 1.2rem;">Agregar Producto</h2>
+    <form id="add-product-form" style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="text" id="title" placeholder="Nombre del producto" required style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
+      <input type="number" id="price" placeholder="Precio" required style="width:120px; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
+      <button type="submit" style="background: #667eea; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer;">Agregar</button>
+    </form>
+  </div>
+
+  <div>
+    <h2 style="color: #764ba2; font-size: 1.2rem;">Eliminar Producto</h2>
+    <form id="delete-product-form" style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="text" id="delete-title" placeholder="Nombre del producto a eliminar" required style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
+      <button type="submit" style="background: #e53e3e; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer;">Eliminar</button>
+    </form>
+  </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realtimeProducts.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realtimeProducts.js"></script>
