@@ -37,5 +37,27 @@
     "thumbnails": [
       "/img/mouse1.png"
     ]
+  },
+  {
+    "title": "scsc",
+    "description": "",
+    "code": "",
+    "price": 2,
+    "status": true,
+    "stock": 1,
+    "category": "",
+    "thumbnails": [],
+    "id": 4
+  },
+  {
+    "title": "asdcas",
+    "description": "ascascasc",
+    "code": "",
+    "price": 1,
+    "status": true,
+    "stock": 1,
+    "category": "",
+    "thumbnails": [],
+    "id": 5
   }
 ]

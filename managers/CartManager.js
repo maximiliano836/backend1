@@ -35,7 +35,7 @@ CartManager.prototype.getCartById = function(id) {
   });
 };
 
-CartManager.prototype.addProductToCart = function(cid, pid) {
+CartManager.prototype.addProductToCart = function(cid, pid, description) {
   var self = this;
   return self._readFile().then(function(carts) {
     var idx = carts.findIndex(function(c) { return String(c.id) === String(cid); });
@@ -43,7 +43,7 @@ CartManager.prototype.addProductToCart = function(cid, pid) {
     var cart = carts[idx];
     var prodIdx = cart.products.findIndex(function(p) { return String(p.product) === String(pid); });
     if (prodIdx === -1) {
-      cart.products.push({ product: pid, quantity: 1 });
+      cart.products.push({ product: pid, description: description || '', quantity: 1 });
     } else {
       cart.products[prodIdx].quantity++;
     }

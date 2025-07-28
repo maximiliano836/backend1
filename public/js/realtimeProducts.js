@@ -22,9 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
   addForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
     const price = parseFloat(document.getElementById('price').value);
-    if (title && !isNaN(price)) {
-      socket.emit('addProduct', { title, price });
+    if (title && description && !isNaN(price)) {
+      socket.emit('addProduct', { title, description, price });
       addForm.reset();
     }
   });
