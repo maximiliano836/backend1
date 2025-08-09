@@ -1,0 +1,95 @@
+<div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+  <div style="background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="padding: 3rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">{{product.title}}</h1>
+        <div style="background: #f8f9ff; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+          <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin: 0;">{{product.description}}</p>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h3 style="color: #333; margin-bottom: 1rem;">Información del Producto</h3>
+          <div style="space-y: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #666;">Precio:</span>
+              <span style="color: #667eea; font-weight: bold; font-size: 1.2rem;">${{product.price}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #666;">Stock:</span>
+              <span style="color: {{#if (gt product.stock 0)}}#48bb78{{else}}#e53e3e{{/if}}; font-weight: bold;">
+                {{product.stock}} unidades
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #666;">Categoría:</span>
+              <span style="background: #f0f0f0; padding: 4px 12px; border-radius: 16px; font-size: 0.9rem;">
+                {{product.category}}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+              <span style="color: #666;">Estado:</span>
+              <span style="color: {{#if product.status}}#48bb78{{else}}#e53e3e{{/if}};">
+                {{#if product.status}}Disponible{{else}}No disponible{{/if}}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 style="color: #333; margin-bottom: 1rem;">Agregar al Carrito</h3>
+          <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 8px;">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; color: #666; margin-bottom: 0.5rem;">Cantidad:</label>
+              <input type="number" id="quantity" value="1" min="1" max="{{product.stock}}" 
+                     style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+            </div>
+            {{#if (and product.status (gt product.stock 0))}}
+            <button onclick="addToCart('{{product._id}}')" 
+                    style="width: 100%; background: #48bb78; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+              🛒 Agregar al Carrito
+            </button>
+            {{else}}
+            <button disabled 
+                    style="width: 100%; background: #ccc; color: #666; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: not-allowed;">
+              Sin Stock
+            </button>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/products" 
+           style="background: #667eea; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block;">
+          ← Volver al Catálogo
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function addToCart(productId) {
+  const quantity = parseInt(document.getElementById('quantity').value);
+  
+  fetch('/api/carts', { method: 'POST' })
+    .then(response => response.json())
+    .then(cart => {
+      return fetch(`/api/carts/${cart._id}/product/${productId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity })
+      });
+    })
+    .then(response => response.json())
+    .then(() => {
+      alert(`${quantity} producto(s) agregado(s) al carrito`);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al agregar producto');
+    });
+}
+</script>

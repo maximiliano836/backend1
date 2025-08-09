@@ -1,19 +1,21 @@
 const express = require('express');
-const ProductManager = require('../../managers/ProductManager');
-const { validateProductData, validateId, validateQuery, handleAsync } = require('../../middleware/validation');
+const ProductManager = require('../../managers/ProductManagerMongo');
+const { validateProductData, validateId, handleAsync } = require('../../middleware/validation');
 const router = express.Router();
 const pm = new ProductManager();
 
-router.get('/', validateQuery, handleAsync(async (req, res) => {
-  const { limit } = req.query;
-  const products = await pm.getProducts();
+router.get('/', handleAsync(async (req, res) => {
+  const { limit, page, sort, query } = req.query;
   
-  if (limit) {
-    const limitNum = parseInt(limit);
-    return res.json(products.slice(0, limitNum));
-  }
-  
-  res.json(products);
+  const options = {
+    limit: limit ? parseInt(limit) : 10,
+    page: page ? parseInt(page) : 1,
+    sort: sort === 'asc' || sort === 'desc' ? sort : undefined,
+    query: query || undefined
+  };
+
+  const result = await pm.getProducts(options);
+  res.json(result);
 }));
 
 router.get('/:pid', validateId('pid'), handleAsync(async (req, res) => {

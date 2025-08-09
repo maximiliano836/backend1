@@ -2,18 +2,36 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
-const ProductManager = require('./managers/ProductManager');
+const mongoose = require('mongoose');
+const ProductManager = require('./managers/ProductManagerMongo');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const pm = new ProductManager();
 
+mongoose.connect('mongodb://localhost:27017/ecommerce', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Conectado a MongoDB'))
+.catch(err => console.error('Error conectando a MongoDB:', err));
+
 const exphbs = require('express-handlebars');
 app.engine('hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: 'main',
-  layoutsDir: path.join(__dirname, 'views/layouts')
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  helpers: {
+    eq: (a, b) => a === b,
+    gt: (a, b) => a > b,
+    and: (a, b) => a && b,
+    or: (a, b) => a || b,
+    multiply: (a, b) => a * b,
+    calculateTotal: (products) => {
+      return products.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    }
+  }
 }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

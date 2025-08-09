@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const validateProductData = (req, res, next) => {
   const { title, description, price, stock, category } = req.body;
   const errors = [];
@@ -35,9 +37,9 @@ const validateProductData = (req, res, next) => {
 const validateId = (paramName = 'id') => {
   return (req, res, next) => {
     const id = req.params[paramName];
-    if (!id || (isNaN(id) && typeof id !== 'string') || (typeof id === 'string' && id.trim() === '')) {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        error: `El parámetro ${paramName} es inválido`
+        error: `El parámetro ${paramName} no es un ID válido`
       });
     }
     next();
