@@ -30,6 +30,9 @@ CartManager.prototype.createCart = function() {
 };
 
 CartManager.prototype.getCartById = function(id) {
+  if (!id || (isNaN(id) && typeof id !== 'string')) {
+    return Promise.reject(new Error('ID de carrito inválido'));
+  }
   return this._readFile().then(function(carts) {
     return carts.find(function(c) { return String(c.id) === String(id); });
   });
@@ -37,6 +40,13 @@ CartManager.prototype.getCartById = function(id) {
 
 CartManager.prototype.addProductToCart = function(cid, pid, description) {
   var self = this;
+  if (!cid || (isNaN(cid) && typeof cid !== 'string')) {
+    return Promise.reject(new Error('ID de carrito inválido'));
+  }
+  if (!pid || (isNaN(pid) && typeof pid !== 'string')) {
+    return Promise.reject(new Error('ID de producto inválido'));
+  }
+  
   return self._readFile().then(function(carts) {
     var idx = carts.findIndex(function(c) { return String(c.id) === String(cid); });
     if (idx === -1) return null;
