@@ -11,7 +11,9 @@
     <nav class="nav">
       <ul class="nav-links">
         <li><a href="/" class="nav-link">🏠 Inicio</a></li>
-        <li><a href="/realtimeproducts" class="nav-link">🛒 Productos en Tiempo Real</a></li>
+        <li><a href="/products" class="nav-link">📦 Catálogo</a></li>
+        <li><a href="#" onclick="goToCart()" class="nav-link">🛒 Mi Carrito (<span id="cart-count">0</span>)</a></li>
+        <li><a href="/realtimeproducts" class="nav-link">⚡ Tiempo Real</a></li>
       </ul>
     </nav>
   </header>
@@ -21,5 +23,93 @@
   </main>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let sessionCartId = localStorage.getItem('sessionCartId');
+
+    async function getOrCreateSessionCart() {
+      if (!sessionCartId) {
+        return await createNewCart();
+      }
+      
+      try {
+        const response = await fetch(`/api/carts/${sessionCartId}`);
+        if (response.ok) {
+          return sessionCartId;
+        } else {
+          return await createNewCart();
+        }
+      } catch (error) {
+        return await createNewCart();
+      }
+    }
+
+    async function createNewCart() {
+      try {
+        const response = await fetch('/api/carts', { method: 'POST' });
+        const cart = await response.json();
+        sessionCartId = cart._id;
+        localStorage.setItem('sessionCartId', sessionCartId);
+        return sessionCartId;
+      } catch (error) {
+        console.error('Error creando carrito:', error);
+        return null;
+      }
+    }
+
+    async function goToCart() {
+      const cartId = await getOrCreateSessionCart();
+      if (cartId) {
+        window.location.href = `/carts/${cartId}`;
+      }
+    }
+
+    async function updateCartCount() {
+      const cartId = await getOrCreateSessionCart();
+      if (cartId) {
+        try {
+          const response = await fetch(`/api/carts/${cartId}`);
+          if (response.ok) {
+            const cart = await response.json();
+            const totalItems = cart.products ? cart.products.reduce((sum, item) => sum + item.quantity, 0) : 0;
+            document.getElementById('cart-count').textContent = totalItems;
+          } else {
+            document.getElementById('cart-count').textContent = '0';
+          }
+        } catch (error) {
+          document.getElementById('cart-count').textContent = '0';
+        }
+      }
+    }
+
+    window.addToCartSession = async function(productId) {
+      const cartId = await getOrCreateSessionCart();
+      
+      try {
+        const response = await fetch(`/api/carts/${cartId}/product/${productId}`, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: 1 })
+        });
+        
+        const responseData = await response.json();
+        
+        if (response.ok) {
+          alert('Producto agregado al carrito');
+          updateCartCount(); 
+        } else {
+          alert('Error: ' + responseData.error);
+        }
+      } catch (error) {
+        console.error('Error completo:', error);
+        alert('Error al agregar producto');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      getOrCreateSessionCart().then(() => {
+        updateCartCount();
+      });
+    });
+  </script>
 </body>
 </html>

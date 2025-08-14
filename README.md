@@ -1,112 +1,85 @@
-# E-Commerce Backend - Entrega Final
+# E-Commerce Backend
 
-Sistema backend para e-commerce con MongoDB, filtros avanzados, paginación y gestión completa de carritos.
+Una aplicación web de comercio electrónico desarrollada con Node.js, Express y MongoDB.
 
-## Nuevas Funcionalidades - Entrega Final ✨
+## Qué hace esta aplicación
 
-### �️ Base de Datos MongoDB
-- Migración completa de archivos JSON a MongoDB
-- Modelos con Mongoose para productos y carritos
-- Referencias entre colecciones usando populate
+- Muestra productos en un catálogo
+- Permite agregar productos al carrito
+- Gestiona productos (crear, editar, eliminar)
+- Todo funciona en tiempo real
 
-### 🔍 Consultas Profesionales de Productos
-- **Paginación**: Navegación por páginas de productos
-- **Filtros**: Búsqueda por categoría y disponibilidad
-- **Ordenamiento**: Por precio ascendente o descendente
-- **Límites**: Control de cantidad de productos por página
+## Qué necesitas tener instalado
 
-### � Gestión Avanzada de Carritos
-- **CRUD completo**: Crear, leer, actualizar y eliminar
-- **Gestión de cantidades**: Actualizar cantidad de productos específicos
-- **Eliminación selectiva**: Remover productos individuales
-- **Vaciado completo**: Limpiar todo el carrito
-- **Referencias a productos**: Población automática con datos completos
+- Node.js
+- MongoDB
+- Un editor de código (como VS Code)
 
-### 🎨 Vistas Profesionales
-- **Catálogo con paginación**: `/products`
-- **Detalle de producto**: `/products/:pid`
-- **Vista de carrito**: `/carts/:cid`
-- **Interfaz responsive** y moderna
+## Cómo ejecutar el proyecto
 
-## Estructura del Proyecto
-
+1. Descarga el proyecto:
 ```
-├── models/
-│   ├── Product.js           # Modelo de producto en MongoDB
-│   └── Cart.js              # Modelo de carrito en MongoDB
-├── managers/
-│   ├── ProductManagerMongo.js  # Gestión de productos con MongoDB
-│   └── CartManagerMongo.js     # Gestión de carritos con MongoDB
-├── views/
-│   ├── products.hbs         # Catálogo con paginación
-│   ├── productDetail.hbs    # Detalle del producto
-│   └── cart.hbs             # Vista del carrito
-└── middleware/
-    └── validation.js        # Validaciones para MongoDB ObjectIds
+git clone https://github.com/maximiliano836/backend1.git
+cd backend1
 ```
 
-## Endpoints API
-
-### Productos
-- `GET /api/products?limit=10&page=1&sort=asc&query=categoria` - Listar con filtros
-- `GET /api/products/:pid` - Obtener producto por ID
-- `POST /api/products` - Crear producto
-- `PUT /api/products/:pid` - Actualizar producto
-- `DELETE /api/products/:pid` - Eliminar producto
-
-### Carritos
-- `POST /api/carts` - Crear carrito
-- `GET /api/carts/:cid` - Obtener carrito con productos completos
-- `POST /api/carts/:cid/product/:pid` - Agregar producto al carrito
-- `DELETE /api/carts/:cid/products/:pid` - Eliminar producto del carrito
-- `PUT /api/carts/:cid` - Actualizar carrito completo
-- `PUT /api/carts/:cid/products/:pid` - Actualizar cantidad de producto
-- `DELETE /api/carts/:cid` - Vaciar carrito
-
-### Vistas
-- `GET /products` - Catálogo con paginación y filtros
-- `GET /products/:pid` - Detalle del producto
-- `GET /carts/:cid` - Vista del carrito
-
-## Parámetros de Consulta de Productos
-
-- **limit**: Número de productos por página (default: 10)
-- **page**: Página a mostrar (default: 1)
-- **sort**: Ordenamiento por precio (`asc` o `desc`)
-- **query**: Filtro por categoría o `available` para productos en stock
-
-## Formato de Respuesta API
-
-```json
-{
-  "status": "success",
-  "payload": [...],
-  "totalPages": 5,
-  "prevPage": 1,
-  "nextPage": 3,
-  "page": 2,
-  "hasPrevPage": true,
-  "hasNextPage": true,
-  "prevLink": "/api/products?page=1&limit=10",
-  "nextLink": "/api/products?page=3&limit=10"
-}
+2. Instala las dependencias:
 ```
-
-## Instalación
-
-```bash
-# Instalar dependencias
 npm install
+```
 
-# Iniciar MongoDB (ver instrucciones abajo)
-# Ejecutar aplicación
+3. Configura la base de datos:
+- Copia el archivo `.env.example` y renómbralo a `.env`
+- Cambia la URL de MongoDB si es necesario
+
+4. Importa productos de ejemplo (solo la primera vez):
+```
+node importar_productos.js
+```
+
+5. Ejecuta la aplicación:
+```
 npm start
 ```
 
-## Tecnologías
+6. Abre tu navegador en: http://localhost:8080
 
-- **Node.js** con Express
-- **MongoDB** con Mongoose
-- **Socket.IO** para tiempo real
-- **Handlebars** para vistas
-- **Validación** de ObjectIds
+## Páginas disponibles
+
+- `/` - Página principal
+- `/products` - Catálogo de productos
+- `/products/:id` - Detalle de un producto
+- `/carts/:id` - Ver carrito
+- `/realtimeproducts` - Gestión de productos en tiempo real
+
+## API disponible
+
+- `GET /api/products` - Lista de productos
+- `POST /api/products` - Crear producto
+- `PUT /api/products/:id` - Actualizar producto
+- `DELETE /api/products/:id` - Eliminar producto
+- `POST /api/carts` - Crear carrito
+- `GET /api/carts/:id` - Ver carrito
+
+## Tecnologías usadas
+
+- Node.js
+- Express
+- MongoDB
+- Handlebars
+- Socket.IO
+
+## Comandos útiles
+
+- `npm start` - Ejecutar la aplicación
+- `npm run dev` - Ejecutar en modo desarrollo
+
+## Configuración
+
+En el archivo `.env` puedes configurar:
+- `PORT` - Puerto del servidor (por defecto 8080)
+- `MONGODB_URI` - Dirección de tu base de datos MongoDB
+
+## Autor
+
+Maximiliano González

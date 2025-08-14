@@ -1,121 +1,78 @@
-<div class="container" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
-  <h1 style="color: #667eea; text-align: center; margin-bottom: 2rem;">🛒 Mi Carrito</h1>
-  
-  {{#if products.length}}
-  <div style="background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); padding: 2rem;">
-    {{#each products}}
-    <div style="display: flex; align-items: center; padding: 1.5rem; border-bottom: 1px solid #eee; gap: 1rem;">
-      <div style="flex: 1;">
-        <h3 style="color: #333; margin-bottom: 0.5rem;">{{product.title}}</h3>
-        <p style="color: #666; margin-bottom: 0.5rem; font-size: 0.9rem;">{{product.description}}</p>
-        <span style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #666;">
-          {{product.category}}
-        </span>
-      </div>
-      
-      <div style="text-align: center; min-width: 120px;">
-        <div style="margin-bottom: 0.5rem;">
-          <label style="color: #666; font-size: 0.9rem;">Cantidad:</label>
-          <input type="number" value="{{quantity}}" min="1" 
-                 onchange="updateQuantity('{{../cartId}}', '{{product._id}}', this.value)"
-                 style="width: 60px; padding: 4px; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
-        </div>
-        <div style="color: #667eea; font-weight: bold;">${{product.price}}</div>
-      </div>
-      
-      <div style="text-align: center; min-width: 100px;">
-        <div style="color: #333; font-weight: bold; margin-bottom: 0.5rem;">
-          ${{multiply product.price quantity}}
-        </div>
-        <button onclick="removeFromCart('{{../cartId}}', '{{product._id}}')"
-                style="background: #e53e3e; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
-          Eliminar
-        </button>
-      </div>
-    </div>
-    {{/each}}
-    
-    <div style="text-align: right; padding-top: 1.5rem; border-top: 2px solid #667eea; margin-top: 1rem;">
-      <div style="font-size: 1.2rem; color: #333; margin-bottom: 1rem;">
-        <strong>Total: ${{calculateTotal products}}</strong>
-      </div>
-      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-        <button onclick="clearCart('{{cartId}}')" 
-                style="background: #e53e3e; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">
-          Vaciar Carrito
-        </button>
-        <button onclick="checkout()" 
-                style="background: #48bb78; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 1.1rem;">
-          Finalizar Compra
-        </button>
-      </div>
-    </div>
-  </div>
-  {{else}}
-  <div style="text-align: center; background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); padding: 3rem;">
-    <h2 style="color: #666; margin-bottom: 1rem;">Tu carrito está vacío</h2>
-    <p style="color: #888; margin-bottom: 2rem;">¡Agrega algunos productos para comenzar!</p>
-    <a href="/products" 
-       style="background: #667eea; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block;">
-      Ir a Productos
-    </a>
-  </div>
-  {{/if}}
-  
-  <div style="text-align: center; margin-top: 2rem;">
-    <a href="/products" 
-       style="background: #667eea; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block;">
+<div class="container" style="max-width:900px;margin:0 auto;padding:2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1 style="color:#667eea;margin:0;">🛒 Mi Carrito</h1>
+    <a href="/products" style="background: #667eea; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px;">
       ← Seguir Comprando
     </a>
   </div>
+
+  {{#if cart.products.length}}
+  <div style="display:grid;gap:15px;margin-bottom:2rem;">
+    {{#each cart.products}}
+      {{#if this.product}}
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #eee;border-radius:8px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:1.1rem;color:#333;margin-bottom:0.5rem;">
+            {{this.product.title}}
+          </div>
+          <div style="color:#666;margin-bottom:0.5rem;">
+            {{this.product.description}}
+          </div>
+          <div style="font-size:.9rem;color:#666;">
+            Cantidad: {{this.quantity}} × ${{this.product.price}}
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="color:#667eea;font-weight:600;font-size:1.2rem;">
+            ${{multiply this.quantity this.product.price}}
+          </div>
+          <button onclick="removeFromCart('{{toString this.product._id}}')" 
+                  style="background:#e53e3e;color:white;border:none;padding:5px 10px;border-radius:4px;font-size:0.8rem;margin-top:0.5rem;cursor:pointer;">
+            Eliminar
+          </button>
+        </div>
+      </div>
+      {{else}}
+      <div style="background:#ffebee;border:1px solid #e57373;border-radius:8px;padding:15px;">
+        <strong>Producto no encontrado</strong> - Cantidad: {{this.quantity}} - ID: {{toString this.product}}
+      </div>
+      {{/if}}
+    {{/each}}
+  </div>
+  
+  <div style="background:#f8f9ff;border:2px solid #667eea;border-radius:8px;padding:20px;text-align:center;">
+    <h3 style="color:#667eea;margin:0;">
+      Total: $<span id="cart-total">{{calculateTotal cart.products}}</span>
+    </h3>
+  </div>
+  
+  {{else}}
+    <div style="text-align:center;padding:3rem;">
+      <h3 style="color:#666;">No hay productos en tu carrito</h3>
+      <p style="color:#999;margin:1rem 0;">¡Explora nuestro catálogo y encuentra productos increíbles!</p>
+      <a href="/products" style="background:#48bb78;color:white;text-decoration:none;padding:12px 24px;border-radius:6px;">
+        Ver Productos
+      </a>
+    </div>
+  {{/if}}
 </div>
 
 <script>
-function updateQuantity(cartId, productId, quantity) {
-  fetch(`/api/carts/${cartId}/products/${productId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ quantity: parseInt(quantity) })
-  })
-  .then(response => response.json())
-  .then(() => {
-    location.reload();
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Error al actualizar cantidad');
-  });
-}
-
-function removeFromCart(cartId, productId) {
-  if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-    fetch(`/api/carts/${cartId}/products/${productId}`, { method: 'DELETE' })
-    .then(response => response.json())
-    .then(() => {
-      location.reload();
-    })
-    .catch(error => {
-      console.error('Error:', error);
+async function removeFromCart(productId) {
+  const cartId = '{{toString cart._id}}';
+  try {
+    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      alert('Producto eliminado del carrito');
+      location.reload(); 
+    } else {
       alert('Error al eliminar producto');
-    });
+    }
+  } catch (error) {
+    alert('Error al eliminar producto');
   }
-}
-
-function clearCart(cartId) {
-  if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-    fetch(`/api/carts/${cartId}`, { method: 'DELETE' })
-    .then(response => response.json())
-    .then(() => {
-      location.reload();
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error al vaciar carrito');
-    });
-  }
-}
-
-function checkout() {
-  alert('Funcionalidad de checkout no implementada');
 }
 </script>

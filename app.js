@@ -3,17 +3,15 @@ const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
 const mongoose = require('mongoose');
-const ProductManager = require('./managers/ProductManagerMongo');
+require('dotenv').config();
+const pm = require('./managers/ProductManagerMongo');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
-const pm = new ProductManager();
 
-mongoose.connect('mongodb://localhost:27017/ecommerce', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
+mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 10000 })
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error conectando a MongoDB:', err));
 
@@ -22,22 +20,49 @@ app.engine('hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: 'main',
   layoutsDir: path.join(__dirname, 'views/layouts'),
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true
+  },
   helpers: {
-    eq: (a, b) => a === b,
-    gt: (a, b) => a > b,
-    and: (a, b) => a && b,
-    or: (a, b) => a || b,
-    multiply: (a, b) => a * b,
-    calculateTotal: (products) => {
-      return products.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-    }
+    eq: function(a, b) { return a === b; },
+    gt: function(a, b) { return Number(a) > Number(b); },
+    and: function(a, b) { return a && b; },
+    or: function(a, b) { return a || b; },
+    toString: function(value) {
+      try {
+        if (value == null) return '';
+        if (typeof value === 'object' && value._id && typeof value._id.toString === 'function') {
+          return value._id.toString();
+        }
+        if (typeof value === 'object' && typeof value.toString === 'function' && value.toString !== Object.prototype.toString) {
+          return value.toString();
+        }
+        if (typeof value === 'object' && '$oid' in value) {
+          return String(value.$oid);
+        }
+        return String(value);
+      } catch (_) {
+        return '';
+      }
+    },
+    multiply: function(a, b) { return (Number(a) || 0) * (Number(b) || 0); },
+    calculateTotal: function(products) {
+      if (!Array.isArray(products)) return 0;
+      return products.reduce((total, item) => {
+        if (!item || !item.product) return total;
+        const quantity = Number(item.quantity) || 0;
+        const price = Number(item.product.price) || 0;
+        return total + (quantity * price);
+      }, 0);
+    },
+    json: function(context) { return JSON.stringify(context); }
   }
 }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -47,9 +72,7 @@ app.use('/', require('./routes/index'));
 
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
-  res.status(500).json({ 
-    error: 'Error interno del servidor'
-  });
+  res.status(500).json({ error: 'Error interno del servidor' });
 });
 
 app.use((req, res) => {
@@ -59,83 +82,66 @@ app.use((req, res) => {
 io.on('connection', function(socket) {
   console.log('Cliente conectado:', socket.id);
   
-  pm.getProducts().then(function(products) {
+  pm.getProducts({ limit: 1000 }).then(function(products) {
     socket.emit('products', products);
-  }).catch(function(error) {
-    console.error('Error al obtener productos para socket:', error);
+  }).catch(function() {
     socket.emit('error', { message: 'Error al cargar productos' });
   });
 
   socket.on('addProduct', function(prod) {
-    try {
-      if (!prod || typeof prod !== 'object') {
-        socket.emit('error', { message: 'Datos de producto inválidos' });
-        return;
-      }
+    if (!prod || typeof prod !== 'object') {
+      socket.emit('error', { message: 'Datos de producto inválidos' });
+      return;
+    }
+    if (!prod.title || !prod.title.trim()) {
+      socket.emit('error', { message: 'El título es obligatorio' });
+      return;
+    }
+    if (!prod.code || !prod.code.trim()) {
+      socket.emit('error', { message: 'El código es obligatorio' });
+      return;
+    }
+    if (prod.price == null || isNaN(prod.price) || Number(prod.price) < 0) {
+      socket.emit('error', { message: 'Precio inválido' });
+      return;
+    }
 
-      if (!prod.title || !prod.title.trim()) {
-        socket.emit('error', { message: 'El título es obligatorio' });
-        return;
-      }
+    const productData = {
+      title: prod.title.trim(),
+      description: prod.description ? prod.description.trim() : '',
+      code: prod.code.trim(),
+      price: Number(prod.price),
+      status: prod.status !== undefined ? !!prod.status : true,
+      stock: prod.stock != null ? Number(prod.stock) : 0,
+      category: prod.category ? prod.category.trim() : 'General',
+      thumbnails: Array.isArray(prod.thumbnails) ? prod.thumbnails : []
+    };
 
-      if (prod.price == null || isNaN(prod.price) || prod.price < 0) {
-        socket.emit('error', { message: 'El precio debe ser un número válido mayor o igual a 0' });
-        return;
-      }
-
-      const productData = {
-        title: prod.title.trim(),
-        description: prod.description ? prod.description.trim() : '',
-        price: Number(prod.price),
-        status: true,
-        stock: prod.stock != null ? Number(prod.stock) : 1,
-        category: prod.category ? prod.category.trim() : 'General',
-        thumbnails: Array.isArray(prod.thumbnails) ? prod.thumbnails : []
-      };
-
-      pm.addProduct(productData).then(function() {
-        return pm.getProducts();
-      }).then(function(updated) {
+    pm.addProduct(productData)
+      .then(() => pm.getProducts({ limit: 1000 }))
+      .then((updated) => {
         io.emit('products', updated);
-        socket.emit('productAdded', { message: 'Producto agregado correctamente' });
-      }).catch(function(error) {
-        console.error('Error al agregar producto via socket:', error);
+        socket.emit('productAdded', { message: 'Producto agregado' });
+      })
+      .catch((error) => {
         socket.emit('error', { message: error.message || 'Error al agregar producto' });
       });
-    } catch (error) {
-      console.error('Error en addProduct socket:', error);
-      socket.emit('error', { message: 'Error inesperado al procesar el producto' });
-    }
   });
 
-  socket.on('deleteProduct', function(title) {
-    try {
-      if (!title || typeof title !== 'string' || !title.trim()) {
-        socket.emit('error', { message: 'Título de producto inválido' });
-        return;
-      }
-
-      pm.getProducts().then(function(products) {
-        var prod = products.find(function(p) { return p.title === title.trim(); });
-        if (!prod) {
-          socket.emit('error', { message: 'Producto no encontrado' });
-          return;
-        }
-        
-        return pm.deleteProduct(prod.id).then(function() {
-          return pm.getProducts();
-        }).then(function(updated) {
-          io.emit('products', updated);
-          socket.emit('productDeleted', { message: 'Producto eliminado correctamente' });
-        });
-      }).catch(function(error) {
-        console.error('Error al eliminar producto via socket:', error);
+  socket.on('deleteProduct', function(productId) {
+    if (!productId) {
+      socket.emit('error', { message: 'ID inválido' });
+      return;
+    }
+    pm.deleteProduct(productId)
+      .then(() => pm.getProducts({ limit: 1000 }))
+      .then((updated) => {
+        io.emit('products', updated);
+        socket.emit('productDeleted', { message: 'Producto eliminado' });
+      })
+      .catch((error) => {
         socket.emit('error', { message: error.message || 'Error al eliminar producto' });
       });
-    } catch (error) {
-      console.error('Error en deleteProduct socket:', error);
-      socket.emit('error', { message: 'Error inesperado al eliminar el producto' });
-    }
   });
 
   socket.on('disconnect', function() {
@@ -143,7 +149,7 @@ io.on('connection', function(socket) {
   });
 });
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, function() {
   console.log('Servidor ejecutándose en http://localhost:' + PORT);
 });

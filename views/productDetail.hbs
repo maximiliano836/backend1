@@ -19,7 +19,7 @@
             <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
               <span style="color: #666;">Stock:</span>
               <span style="color: {{#if (gt product.stock 0)}}#48bb78{{else}}#e53e3e{{/if}}; font-weight: bold;">
-                {{product.stock}} unidades
+                {{#if (gt product.stock 0)}}{{product.stock}} unidades{{else}}Sin stock{{/if}}
               </span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
@@ -30,8 +30,8 @@
             </div>
             <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
               <span style="color: #666;">Estado:</span>
-              <span style="color: {{#if product.status}}#48bb78{{else}}#e53e3e{{/if}};">
-                {{#if product.status}}Disponible{{else}}No disponible{{/if}}
+              <span style="color: {{#if (gt product.stock 0)}}#48bb78{{else}}#e53e3e{{/if}};">
+                {{#if (gt product.stock 0)}}Disponible{{else}}No disponible{{/if}}
               </span>
             </div>
           </div>
@@ -45,15 +45,22 @@
               <input type="number" id="quantity" value="1" min="1" max="{{product.stock}}" 
                      style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
             </div>
-            {{#if (and product.status (gt product.stock 0))}}
-            <button onclick="addToCart('{{product._id}}')" 
-                    style="width: 100%; background: #48bb78; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
-              🛒 Agregar al Carrito
-            </button>
+            {{#if product.status}}
+              {{#if (gt product.stock 0)}}
+              <button onclick="addToCart('{{toString product._id}}')" 
+                      style="width: 100%; background: #48bb78; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                🛒 Agregar al Carrito
+              </button>
+              {{else}}
+              <button disabled 
+                      style="width: 100%; background: #ccc; color: #666; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: not-allowed;">
+                Sin stock
+              </button>
+              {{/if}}
             {{else}}
             <button disabled 
                     style="width: 100%; background: #ccc; color: #666; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: not-allowed;">
-              Sin Stock
+              No disponible
             </button>
             {{/if}}
           </div>
@@ -71,25 +78,45 @@
 </div>
 
 <script>
-function addToCart(productId) {
+async function addToCart(productId) {
   const quantity = parseInt(document.getElementById('quantity').value);
   
-  fetch('/api/carts', { method: 'POST' })
-    .then(response => response.json())
-    .then(cart => {
-      return fetch(`/api/carts/${cart._id}/product/${productId}`, {
+  if (window.addToCartSession) {
+    try {
+      const cartId = localStorage.getItem('sessionCartId') || await window.getOrCreateSessionCart();
+      const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity })
       });
-    })
-    .then(response => response.json())
-    .then(() => {
-      alert(`${quantity} producto(s) agregado(s) al carrito`);
-    })
-    .catch(error => {
-      console.error('Error:', error);
+      
+      if (response.ok) {
+        alert(`${quantity} producto(s) agregado(s) al carrito`);
+        if (window.updateCartCount) window.updateCartCount();
+      } else {
+        alert('Error al agregar producto');
+      }
+    } catch (error) {
       alert('Error al agregar producto');
-    });
+    }
+  } else {
+    fetch('/api/carts', { method: 'POST' })
+      .then(response => response.json())
+      .then(cart => {
+        return fetch(`/api/carts/${cart._id}/product/${productId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity })
+        });
+      })
+      .then(response => response.json())
+      .then(() => {
+        alert(`${quantity} producto(s) agregado(s) al carrito`);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al agregar producto');
+      });
+  }
 }
 </script>

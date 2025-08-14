@@ -1,29 +1,62 @@
+<section class="container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+  <h1 style="color: #667eea; text-align: center; margin-bottom: 1rem;">⚡ Productos en Tiempo Real</h1>
 
-<section class="container" style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(102,126,234,0.08); padding: 2rem 2.5rem;">
-  <h1 style="color: #667eea; text-align: center; margin-bottom: 1.5rem;">🛒 Productos en Tiempo Real</h1>
-  <ul id="product-list" style="list-style: none; padding: 0; margin-bottom: 2rem;"></ul>
+  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <div style="background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <h3 style="margin-bottom: 0.5rem;">Agregar producto</h3>
+      <form id="addForm" onsubmit="return false;">
+        <input id="title" placeholder="Título" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+        <input id="code" placeholder="Código" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+        <input id="price" type="number" placeholder="Precio" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+        <input id="stock" type="number" placeholder="Stock" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+        <input id="category" placeholder="Categoría" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+        <textarea id="description" placeholder="Descripción" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;"></textarea>
+        <button onclick="submitAdd()" style="width:100%;background:#48bb78;color:#fff;border:none;padding:.6rem;border-radius:6px;cursor:pointer;">Agregar</button>
+      </form>
 
-  <div style="margin-bottom: 2rem;">
-    <h2 style="color: #764ba2; font-size: 1.2rem;">Agregar Producto</h2>
-    <form id="add-product-form" style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <input type="text" id="title" placeholder="Nombre del producto" required style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
-      <input type="text" id="description" placeholder="Descripción" required style="flex:2; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
-      <input type="number" id="price" placeholder="Precio" required style="width:120px; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
-      <button type="submit" style="background: #667eea; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer;">Agregar</button>
-    </form>
-  </div>
+      <h3 style="margin:1rem 0 .5rem;">Eliminar producto</h3>
+      <input id="deleteId" placeholder="ID del producto" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
+      <button onclick="submitDelete()" style="width:100%;background:#e53e3e;color:#fff;border:none;padding:.6rem;border-radius:6px;cursor:pointer;">Eliminar</button>
+    </div>
 
-  <div>
-    <h2 style="color: #764ba2; font-size: 1.2rem;">Eliminar Producto</h2>
-    <form id="delete-product-form" style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <input type="text" id="delete-title" placeholder="Nombre del producto a eliminar" required style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid #ccc;" />
-      <button type="submit" style="background: #e53e3e; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer;">Eliminar</button>
-    </form>
+    <div style="background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <h3>Listado</h3>
+      <div id="list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;"></div>
+    </div>
   </div>
 </section>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/realtimeProducts.js"></script>
+<script>
+const socket = io();
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/realtimeProducts.js"></script>
+socket.on('products', (items) => {
+  const list = document.getElementById('list');
+  list.innerHTML = items.map(p => `
+    <div style="border:1px solid #eee;border-radius:8px;padding:.75rem;">
+      <div style="font-weight:600">${p.title}</div>
+      <div style="color:#667eea">$${p.price}</div>
+      <div style="font-size:.85rem;color:#666">ID: ${p._id || p.id}</div>
+    </div>
+  `).join('');
+});
+
+socket.on('error', (e) => alert(e.message || 'Error'));
+
+function submitAdd() {
+  const prod = {
+    title: document.getElementById('title').value,
+    code: document.getElementById('code').value,
+    price: document.getElementById('price').value,
+    stock: document.getElementById('stock').value,
+    category: document.getElementById('category').value,
+    description: document.getElementById('description').value
+  };
+  socket.emit('addProduct', prod);
+}
+
+function submitDelete() {
+  const id = document.getElementById('deleteId').value;
+  socket.emit('deleteProduct', id);
+}
+</script>

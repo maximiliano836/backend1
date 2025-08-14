@@ -1,70 +1,63 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 
-class ProductManager {
-  async getProducts(options = {}) {
-    const { limit = 10, page = 1, sort, query } = options;
-    
-    let filter = {};
-    if (query) {
-      if (query === 'available') {
-        filter = { stock: { $gt: 0 } };
-      } else {
-        filter = { category: { $regex: query, $options: 'i' } };
-      }
-    }
+function buildFilter(query) {
+  if (!query) return {};
+  const q = String(query).toLowerCase().trim();
+  if (q === 'true' || q === 'available' || q === 'disponible') return { status: true };
+  if (q === 'false' || q === 'unavailable' || q === 'nodisponible') return { status: false };
+  return { category: { $regex: query, $options: 'i' } };
+}
 
-    let sortOptions = {};
-    if (sort) {
-      sortOptions.price = sort === 'asc' ? 1 : -1;
-    }
+function buildSort(sort) {
+  if (sort === 'asc') return { price: 1 };
+  if (sort === 'desc') return { price: -1 };
+  return undefined;
+}
 
+class ProductManagerMongo {
+  async getProducts({ limit = 10, page = 1, sort, query } = {}) {
     const skip = (page - 1) * limit;
-    
-    const products = await Product.find(filter)
-      .sort(sortOptions)
-      .limit(limit)
-      .skip(skip)
-      .lean();
+    const filter = buildFilter(query);
+    const sortOpt = buildSort(sort);
+    const q = Product.find(filter).skip(skip).limit(limit);
+    if (sortOpt) q.sort(sortOpt);
+    return q.lean();
+  }
 
-    const totalProducts = await Product.countDocuments(filter);
-    const totalPages = Math.ceil(totalProducts / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-    
-    return {
-      status: 'success',
-      payload: products,
-      totalPages,
-      prevPage: hasPrevPage ? page - 1 : null,
-      nextPage: hasNextPage ? page + 1 : null,
-      page,
-      hasPrevPage,
-      hasNextPage,
-      prevLink: hasPrevPage ? `/api/products?page=${page - 1}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null,
-      nextLink: hasNextPage ? `/api/products?page=${page + 1}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null
-    };
+  async getProductsPaginated({ limit = 10, page = 1, sort, query } = {}) {
+    const skip = (page - 1) * limit;
+    const filter = buildFilter(query);
+    const sortOpt = buildSort(sort);
+    const queryCursor = Product.find(filter).skip(skip).limit(limit);
+    if (sortOpt) queryCursor.sort(sortOpt);
+    const [docs, total] = await Promise.all([
+      queryCursor.lean(),
+      Product.countDocuments(filter)
+    ]);
+    return { docs, total, page, limit };
   }
 
   async getProductById(id) {
-    const product = await Product.findById(id);
-    return product;
+    if (!mongoose.isValidObjectId(id)) return null;
+    return Product.findById(id).lean();
   }
 
-  async addProduct(productData) {
-    const product = new Product(productData);
-    await product.save();
-    return product;
+  async addProduct(data) {
+    return Product.create(data);
   }
 
   async updateProduct(id, updates) {
-    const product = await Product.findByIdAndUpdate(id, updates, { new: true });
-    return product;
+    if (!mongoose.isValidObjectId(id)) return null;
+    if (updates._id) delete updates._id;
+    if (updates.id) delete updates.id;
+    return Product.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
   }
 
   async deleteProduct(id) {
-    const product = await Product.findByIdAndDelete(id);
-    return product;
+    if (!mongoose.isValidObjectId(id)) return null;
+    return Product.findByIdAndDelete(id);
   }
 }
 
-module.exports = ProductManager;
+module.exports = new ProductManagerMongo();

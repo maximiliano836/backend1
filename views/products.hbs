@@ -3,12 +3,12 @@
   
   <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap;">
     <form method="GET" style="display: flex; gap: 10px; align-items: center;">
-      <input type="text" name="query" placeholder="Buscar por categoría" value="{{query}}" 
+      <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad (true/false)" value="{{query}}" 
              style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
       <select name="sort" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
         <option value="">Sin ordenar</option>
-        <option value="asc" {{#if (eq sort 'asc')}}selected{{/if}}>Precio Ascendente</option>
-        <option value="desc" {{#if (eq sort 'desc')}}selected{{/if}}>Precio Descendente</option>
+        <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio Ascendente</option>
+        <option value="desc" {{#if (eq sort "desc")}}selected{{/if}}>Precio Descendente</option>
       </select>
       <button type="submit" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
         Filtrar
@@ -26,20 +26,30 @@
           <span style="color: #667eea; font-weight: bold; font-size: 1.1rem;">${{price}}</span>
           <span style="color: #666; font-size: 0.9rem;">Stock: {{stock}}</span>
         </div>
-        <div style="margin-bottom: 1rem;">
+        <div style="margin-bottom: 1rem; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <span style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #666;">
             {{category}}
           </span>
+          <span style="padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: white; background: {{#if (gt stock 0)}}#48bb78{{else}}#e53e3e{{/if}};">
+            {{#if (gt stock 0)}}Disponible{{else}}No disponible{{/if}}
+          </span>
         </div>
         <div style="display: flex; gap: 8px;">
-          <a href="/products/{{_id}}" 
+          <a href="/products/{{toString _id}}" 
              style="flex: 1; background: #667eea; color: white; text-decoration: none; padding: 8px; text-align: center; border-radius: 6px; font-size: 0.9rem;">
             Ver Detalles
           </a>
-          <button onclick="addToCart('{{_id}}')" 
-                  style="background: #48bb78; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
-            🛒
-          </button>
+          {{#if (gt stock 0)}}
+            <button onclick="addToCartSession('{{toString _id}}')" 
+                    style="background: #48bb78; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+              🛒
+            </button>
+          {{else}}
+            <button disabled 
+                    style="background: #ccc; color: #666; border: none; padding: 8px 12px; border-radius: 6px; cursor: not-allowed;">
+              Sin stock
+            </button>
+          {{/if}}
         </div>
       </div>
     </div>
@@ -69,18 +79,15 @@
 
 <script>
 function addToCart(productId) {
-  fetch('/api/carts', { method: 'POST' })
-    .then(response => response.json())
-    .then(cart => {
-      return fetch(`/api/carts/${cart._id}/product/${productId}`, { method: 'POST' });
-    })
-    .then(response => response.json())
-    .then(() => {
-      alert('Producto agregado al carrito');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error al agregar producto');
-    });
+  if (window.addToCartSession) {
+    window.addToCartSession(productId);
+  } else {
+    fetch('/api/carts', { method: 'POST' })
+      .then(r => r.json())
+      .then(cart => fetch(`/api/carts/${cart._id}/product/${productId}`, { method: 'POST' }))
+      .then(r => r.json())
+      .then(() => alert('Producto agregado al carrito'))
+      .catch(() => alert('Error al agregar producto'));
+  }
 }
 </script>
