@@ -4,8 +4,11 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    const page = req.query.page ? parseInt(req.query.page) : 1;
+    // validate pagination params (small but important)
+    let limit = parseInt(req.query.limit, 10);
+    if (!Number.isFinite(limit) || limit <= 0) limit = 10;
+    let page = parseInt(req.query.page, 10);
+    if (!Number.isFinite(page) || page <= 0) page = 1;
     const sort = req.query.sort === 'asc' || req.query.sort === 'desc' ? req.query.sort : undefined;
     const query = req.query.query || undefined;
 
@@ -22,7 +25,7 @@ router.get('/', async (req, res, next) => {
     const makeLink = (p) => {
       if (!p) return null;
       const params = new URLSearchParams();
-      if (limit) params.set('limit', String(limit));
+      params.set('limit', String(limit));
       if (sort) params.set('sort', sort);
       if (query) params.set('query', query);
       params.set('page', String(p));
@@ -46,10 +49,14 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:pid', async (req, res) => {
-  const prod = await pm.getProductById(req.params.pid);
-  if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
-  res.json(prod);
+router.get('/:pid', async (req, res, next) => {
+  try {
+    const prod = await pm.getProductById(req.params.pid);
+    if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
+    res.json(prod);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post('/', async (req, res, next) => {
@@ -75,19 +82,27 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:pid', async (req, res) => {
-  if (!req.body || Object.keys(req.body).length === 0) {
-    return res.status(400).json({ status: 'error', error: 'No se enviaron campos' });
+router.put('/:pid', async (req, res, next) => {
+  try {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({ status: 'error', error: 'No se enviaron campos' });
+    }
+    const prod = await pm.updateProduct(req.params.pid, req.body);
+    if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
+    res.json(prod);
+  } catch (err) {
+    next(err);
   }
-  const prod = await pm.updateProduct(req.params.pid, req.body);
-  if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
-  res.json(prod);
 });
 
-router.delete('/:pid', async (req, res) => {
-  const prod = await pm.deleteProduct(req.params.pid);
-  if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
-  res.json({ status: 'success', deleted: prod });
+router.delete('/:pid', async (req, res, next) => {
+  try {
+    const prod = await pm.deleteProduct(req.params.pid);
+    if (!prod) return res.status(404).json({ status: 'error', error: 'Producto no encontrado' });
+    res.json({ status: 'success', deleted: prod });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

@@ -129,7 +129,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('deleteProduct', function(productId) {
-    if (!productId) {
+    if (!productId || !mongoose.isValidObjectId(productId)) {
       socket.emit('error', { message: 'ID inválido' });
       return;
     }
