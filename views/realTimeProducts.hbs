@@ -1,27 +1,27 @@
-<section class="container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
-  <h1 style="color: #667eea; text-align: center; margin-bottom: 1rem;">⚡ Productos en Tiempo Real</h1>
+<section class="container container-mid">
+  <h1 class="page-title">⚡ Productos en Tiempo Real</h1>
 
-  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
-    <div style="background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-      <h3 style="margin-bottom: 0.5rem;">Agregar producto</h3>
+  <div class="grid-two">
+    <div class="card p-1r" style="box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <h3 class="card-title" style="margin-bottom: 0.5rem;">Agregar producto</h3>
       <form id="addForm" onsubmit="return false;">
-        <input id="title" placeholder="Título" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-        <input id="code" placeholder="Código" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-        <input id="price" type="number" placeholder="Precio" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-        <input id="stock" type="number" placeholder="Stock" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-        <input id="category" placeholder="Categoría" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-        <textarea id="description" placeholder="Descripción" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;"></textarea>
-        <button onclick="submitAdd()" style="width:100%;background:#48bb78;color:#fff;border:none;padding:.6rem;border-radius:6px;cursor:pointer;">Agregar</button>
+        <input id="title" placeholder="Título" class="form-control" style="margin:.25rem 0;">
+        <input id="code" placeholder="Código" class="form-control" style="margin:.25rem 0;">
+        <input id="price" type="number" placeholder="Precio" class="form-control" style="margin:.25rem 0;">
+        <input id="stock" type="number" placeholder="Stock" class="form-control" style="margin:.25rem 0;">
+        <input id="category" placeholder="Categoría" class="form-control" style="margin:.25rem 0;">
+        <textarea id="description" placeholder="Descripción" class="form-control" style="margin:.25rem 0;"></textarea>
+        <button onclick="submitAdd()" class="btn btn-success w-100">Agregar</button>
       </form>
 
-      <h3 style="margin:1rem 0 .5rem;">Eliminar producto</h3>
-      <input id="deleteId" placeholder="ID del producto" style="width:100%;margin:.25rem 0;padding:.5rem;border:1px solid #ddd;border-radius:6px;">
-      <button onclick="submitDelete()" style="width:100%;background:#e53e3e;color:#fff;border:none;padding:.6rem;border-radius:6px;cursor:pointer;">Eliminar</button>
+  <h3 class="card-title" style="margin:1rem 0 .5rem;">Eliminar producto</h3>
+      <input id="deleteId" placeholder="ID del producto" class="form-control" style="margin:.25rem 0;">
+      <button onclick="submitDelete()" class="btn btn-danger w-100">Eliminar</button>
     </div>
 
-    <div style="background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-      <h3>Listado</h3>
-      <div id="list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;"></div>
+    <div class="card p-1r" style="box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <h3 class="card-title">Listado</h3>
+      <div id="list" class="grid-cards"></div>
     </div>
   </div>
 </section>
@@ -33,10 +33,10 @@ const socket = io();
 socket.on('products', (items) => {
   const list = document.getElementById('list');
   list.innerHTML = items.map(p => `
-    <div style="border:1px solid #eee;border-radius:8px;padding:.75rem;">
-      <div style="font-weight:600">${p.title}</div>
-      <div style="color:#667eea">$${p.price}</div>
-      <div style="font-size:.85rem;color:#666">ID: ${p._id || p.id}</div>
+    <div class="mini-card">
+      <div class="mini-title">${p.title}</div>
+      <div class="mini-price">$${p.price}</div>
+      <div class="mini-id">ID: ${p._id || p.id}</div>
     </div>
   `).join('');
 });

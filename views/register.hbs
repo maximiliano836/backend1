@@ -1,0 +1,17 @@
+<section class="container narrow">
+  <h1 class="page-title">Crear cuenta</h1>
+  {{#if error}}
+    <div class="alert">{{error}}</div>
+  {{/if}}
+  <form method="POST" action="/register">
+    <input name="first_name" placeholder="Nombre" required class="form-control">
+    <input name="last_name" placeholder="Apellido" required class="form-control">
+    <input name="email" type="email" placeholder="Email" required class="form-control">
+    <input name="age" type="number" placeholder="Edad" required min="0" class="form-control">
+    <input name="password" type="password" placeholder="Contraseña" required class="form-control">
+    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+  </form>
+  <div class="text-center mt-1">
+    <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+  </div>
+</section>

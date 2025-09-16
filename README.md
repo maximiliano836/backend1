@@ -32,6 +32,23 @@ npm install
 - Copia el archivo `.env.example` y renómbralo a `.env`
 - Cambia la URL de MongoDB si es necesario
 
+## Auth y Usuarios (Entrega 1)
+
+- Variables en `.env` (ver `.env.example`):
+	- MONGODB_URI
+	- JWT_SECRET
+	- JWT_EXPIRES
+
+- Endpoints:
+	- POST `/api/sessions/register` body: { first_name, last_name, email, age, password }
+	- POST `/api/sessions/login` body: { email, password } -> Setea cookie `token`
+	- GET `/api/sessions/current` (requiere JWT por cookie o header Bearer)
+	- POST `/api/sessions/logout`
+	- CRUD de usuarios `/api/users` (protegido con JWT; crear/eliminar requiere rol admin)
+
+- Notas:
+	- Las contraseñas se guardan en hash con bcrypt.
+	- El JWT se puede enviar por header `Authorization: Bearer <token>` o viene en cookie `token`.
 4. Importa productos de ejemplo (solo la primera vez):
 ```
 node importar_productos.js

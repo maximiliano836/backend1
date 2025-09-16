@@ -1,16 +1,16 @@
-<div class="container" style="max-width:900px;margin:0 auto;padding:2rem;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h1 style="color:#667eea;margin:0;">🛒 Mi Carrito</h1>
-    <a href="/products" style="background: #667eea; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px;">
+<div class="container container-900">
+  <div class="row-between mb-2r">
+    <h1 class="page-title" style="margin:0;">🛒 Mi Carrito</h1>
+    <a href="/products" class="btn-primary" style="text-decoration: none; padding: 10px 20px; border-radius: 6px;">
       ← Seguir Comprando
     </a>
   </div>
 
   {{#if cart.products.length}}
-  <div style="display:grid;gap:15px;margin-bottom:2rem;">
+  <div class="stack mb-2r">
     {{#each cart.products}}
       {{#if this.product}}
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #eee;border-radius:8px;padding:15px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;border:1px solid #eee;padding:15px;">
         <div style="flex:1;">
           <div style="font-weight:600;font-size:1.1rem;color:#333;margin-bottom:0.5rem;">
             {{this.product.title}}
@@ -23,34 +23,33 @@
           </div>
         </div>
         <div style="text-align:right;">
-          <div style="color:#667eea;font-weight:600;font-size:1.2rem;">
+          <div class="price" style="font-size:1.2rem;">
             ${{multiply this.quantity this.product.price}}
           </div>
-          <button onclick="removeFromCart('{{toString this.product._id}}')" 
-                  style="background:#e53e3e;color:white;border:none;padding:5px 10px;border-radius:4px;font-size:0.8rem;margin-top:0.5rem;cursor:pointer;">
+          <button onclick="removeFromCart('{{toString this.product._id}}')" class="btn btn-danger btn-sm" style="margin-top:0.5rem;">
             Eliminar
           </button>
         </div>
       </div>
       {{else}}
-      <div style="background:#ffebee;border:1px solid #e57373;border-radius:8px;padding:15px;">
+      <div class="alert" style="background:#ffebee;border:1px solid #e57373;border-radius:8px;padding:15px;">
         <strong>Producto no encontrado</strong> - Cantidad: {{this.quantity}} - ID: {{toString this.product}}
       </div>
       {{/if}}
     {{/each}}
   </div>
   
-  <div style="background:#f8f9ff;border:2px solid #667eea;border-radius:8px;padding:20px;text-align:center;">
-    <h3 style="color:#667eea;margin:0;">
+  <div class="total-box">
+    <h3 class="page-title" style="margin:0;">
       Total: $<span id="cart-total">{{calculateTotal cart.products}}</span>
     </h3>
   </div>
   
   {{else}}
-    <div style="text-align:center;padding:3rem;">
-      <h3 style="color:#666;">No hay productos en tu carrito</h3>
-      <p style="color:#999;margin:1rem 0;">¡Explora nuestro catálogo y encuentra productos increíbles!</p>
-      <a href="/products" style="background:#48bb78;color:white;text-decoration:none;padding:12px 24px;border-radius:6px;">
+    <div class="empty">
+      <h3 class="text-muted">No hay productos en tu carrito</h3>
+      <p class="text-light" style="margin:1rem 0;">¡Explora nuestro catálogo y encuentra productos increíbles!</p>
+      <a href="/products" class="btn btn-success" style="text-decoration:none;padding:12px 24px;border-radius:6px;">
         Ver Productos
       </a>
     </div>

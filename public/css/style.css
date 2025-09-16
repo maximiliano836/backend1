@@ -19,25 +19,22 @@ body {
 
 .nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 16px 20px; /* más separación arriba/abajo */
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.nav-brand h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #667eea;
-}
+/* eliminado .nav-brand: no se utiliza en las vistas */
 
 .nav-links {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 20px;
+  gap: 24px; /* más separación entre items */
+  margin: auto; /* empuja los elementos a la derecha */
 }
 
 .nav-link {
@@ -63,7 +60,7 @@ body {
   padding: 2px 6px;
   font-size: 0.8rem;
   font-weight: bold;
-  margin-left: 5px;
+  margin: 5px;
 }
 
 .nav-link:hover #cart-count {
@@ -72,7 +69,7 @@ body {
 }
 
 .main-content {
-  padding-top: 80px;
+  padding-top: 110px; /* compensa header más alto */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -91,99 +88,148 @@ body {
   margin-top: 20px;
 }
 
-.logo {
-  margin-bottom: 15px;
+/* Variantes y utilidades simples */
+.container.narrow {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.logo img {
-  max-width: 80px;
-  height: auto;
-  border-radius: 50%;
+.page-title {
+  color: #667eea;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
-.chat-container {
-  margin-top: 15px;
+.page-title.error {
+  color: #e53e3e;
 }
 
-h2 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 1.5em;
+.text-center { text-align: center; }
+.mt-1 { margin-top: 1rem; padding: 1rem;}
+
+.form-control {
+  width: 100%;
+  margin: .5rem 0;
+  padding: .5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
-#messages {
-  list-style: none;
-  padding: 0;
-  max-height: 250px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #f9f9f9;
-  min-height: 150px;
+.btn { cursor: pointer; border: none; border-radius: 6px; padding: .6rem; }
+.w-100 { width: 100%; }
+
+.btn-danger {
+  background: #e53e3e;
+  color: #fff;
 }
 
-#messages li {
-  padding: 10px 15px;
-  background: #fff;
-  margin: 5px;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: left;
+.alert-success {
+  background: #e6ffed;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
 }
 
-#messages li:nth-child(even) {
-  background: #e3f2fd;
-}
+/* -------- Utilidades de layout y tipografía -------- */
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.container-mid { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+.container-900 { max-width: 900px; margin: 0 auto; padding: 2rem; }
+.container-800 { max-width: 800px; margin: 0 auto; padding: 2rem; }
+.mb-2r { margin-bottom: 2rem; }
+.mb-1r { margin-bottom: 1rem; }
+.mt-2r { margin-top: 2rem; }
+.p-1r { padding: 1rem; }
+.p-1_5r { padding: 1.5rem; }
+.p-2r { padding: 2rem; }
+.p-3r { padding: 3rem; }
 
-#chatForm {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
+.center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: #666; }
+.text-light { color: #999; }
+.text-success { color: #48bb78; }
+.text-danger { color: #e53e3e; }
+.flex-1 { flex: 1; }
 
-#messageInput {
-  flex: 1;
-  padding: 10px 15px;
-  border: 2px solid #ddd;
-  border-radius: 25px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
+/* -------- Cards y contenedores -------- */
+.card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; }
+.card-body { padding: 1.5rem; }
+.card-body-lg { padding: 3rem; }
+.card-outline { border: 1px solid #eee; }
+.panel-soft { background: #f8f9ff; padding: 1rem; border-radius: 8px; }
+.panel-soft-lg { background: #f8f9ff; padding: 1.5rem; border-radius: 8px; }
 
-#messageInput:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
+/* -------- Grids y filas -------- */
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.justify-center { justify-content: center; }
+.grid-two { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; }
+.grid-two-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+.grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.row-8 { display: flex; gap: 8px; }
+.stack { display: grid; gap: 15px; }
 
-#sendButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 16px;
-}
+/* -------- Tipos de contenido -------- */
+.card-title { color: #333; margin-bottom: 0.5rem; font-size: 1.2rem; }
+.price { color: #667eea; font-weight: bold; font-size: 1.1rem; }
+.price-lg { font-size: 1.2rem; }
+.badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+.badge-gray { background: #f0f0f0; color: #666; }
+.badge-pill { border-radius: 16px; padding: 4px 12px; }
+.badge-status { color: #fff; }
+.badge-status.available { background: #48bb78; }
+.badge-status.unavailable { background: #e53e3e; }
 
-#sendButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
+/* -------- Botones extra -------- */
+.btn-success { background: #48bb78; color: #fff; }
+.btn-gray { background: #ccc; color: #666; }
+.btn-sm { padding: 5px 10px; font-size: 0.9rem; }
+.btn-lg { padding: 12px; font-size: 1.1rem; }
+.btn:disabled, .btn[disabled] { cursor: not-allowed; opacity: 0.8; }
+.max-420 { max-width: 420px; }
+.max-200 { max-width: 200px; }
 
-#sendButton:active {
-  transform: translateY(0);
-}
+/* -------- Componentes específicos -------- */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; }
+.info-list { display: grid; gap: .75rem; }
+.info-row { display: flex; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid #eee; }
+.no-border { border-bottom: none; }
+.total-box { background:#f8f9ff; border:2px solid #667eea; border-radius:8px; padding:20px; text-align:center; }
+.empty { text-align:center; padding:3rem; }
 
-#sendButton span {
+/* Mini cards para listado en tiempo real */
+.mini-card { border:1px solid #eee; border-radius:8px; padding:.75rem; }
+.mini-title { font-weight:600; }
+.mini-price { color:#667eea; }
+.mini-id { font-size:.85rem; color:#666; }
+
+/* Tarjetas de la home */
+.home-card-1, .home-card-2 {
   color: white;
-  font-size: 18px;
+  text-decoration: none;
+  padding: 2rem;
+  border-radius: 12px;
+  transition: transform 0.2s;
+  display: block;
 }
+.home-card-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.home-card-2 { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+.home-card-1:hover, .home-card-2:hover { transform: translateY(-2px); }
+
+/* Títulos */
+.display-title { font-size: 3rem; }
+.lead { font-size: 1.2rem; }
+
+/* eliminado .logo: no se utiliza en las vistas */
+
+/* eliminado .chat-container: chat no implementado en vistas */
+/* eliminado h2 global para reducir ruido (no usado) */
+
+/* eliminado #messages y derivados: no usados */
+
+/* eliminados #chatForm, #messageInput, #sendButton: no usados */
 
 .alert {
   background: #ffebee;
@@ -278,25 +324,7 @@ h2 {
   flex-wrap: wrap;
 }
 
-.btn-secondary {
-  display: inline-block;
-  padding: 12px 24px;
-  font-size: 1rem;
-  background: transparent;
-  color: #667eea;
-  text-decoration: none;
-  border: 2px solid #667eea;
-  border-radius: 25px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.btn-secondary:hover {
-  background: #667eea;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
+/* eliminado .btn-secondary: no se usa actualmente */
 
 .error-suggestions {
   background: #f8f9fa;

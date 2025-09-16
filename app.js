@@ -5,6 +5,10 @@ const socketio = require('socket.io');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const pm = require('./managers/ProductManagerMongo');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const initPassport = require('./config/passport');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const server = http.createServer(app);
@@ -65,9 +69,32 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+initPassport();
+app.use(passport.initialize());
+
+// Middleware simple para exponer el usuario autenticado en todas las vistas
+app.use((req, res, next) => {
+  const token = req.cookies && req.cookies.token;
+  if (!token) {
+    res.locals.user = null;
+    return next();
+  }
+  try {
+    const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
+    const payload = jwt.verify(token, JWT_SECRET);
+    // Guardamos datos mínimos del usuario (uid, email, role)
+    res.locals.user = { id: payload.uid, email: payload.email, role: payload.role };
+  } catch {
+    res.locals.user = null;
+  }
+  next();
+});
 
 app.use('/api/products', require('./routes/api/products'));
 app.use('/api/carts', require('./routes/api/carts'));
+app.use('/api/sessions', require('./routes/api/sessions'));
+app.use('/api/users', require('./routes/api/users'));
 app.use('/', require('./routes/index'));
 
 app.use((err, req, res, next) => {

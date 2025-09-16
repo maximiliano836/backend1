@@ -1,36 +1,36 @@
-<div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-  <div style="background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); overflow: hidden;">
-    <div style="padding: 3rem;">
-      <div style="text-align: center; margin-bottom: 2rem;">
-        <h1 style="color: #667eea; margin-bottom: 1rem; font-size: 2.5rem;">{{product.title}}</h1>
-        <div style="background: #f8f9ff; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-          <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin: 0;">{{product.description}}</p>
+<div class="container container-800">
+  <div class="card" style="border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
+    <div class="card-body-lg">
+      <div class="center mb-2r">
+        <h1 class="page-title" style="font-size: 2.5rem;">{{product.title}}</h1>
+        <div class="panel-soft mb-2r">
+          <p class="text-muted" style="font-size: 1.1rem; line-height: 1.6; margin: 0;">{{product.description}}</p>
         </div>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+  <div class="grid-two-equal">
         <div>
-          <h3 style="color: #333; margin-bottom: 1rem;">Información del Producto</h3>
-          <div style="space-y: 0.5rem;">
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-              <span style="color: #666;">Precio:</span>
-              <span style="color: #667eea; font-weight: bold; font-size: 1.2rem;">${{product.price}}</span>
+          <h3 class="card-title">Información del Producto</h3>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="text-muted">Precio:</span>
+              <span class="price" style="font-size: 1.2rem;">${{product.price}}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-              <span style="color: #666;">Stock:</span>
-              <span style="color: {{#if (gt product.stock 0)}}#48bb78{{else}}#e53e3e{{/if}}; font-weight: bold;">
+            <div class="info-row">
+              <span class="text-muted">Stock:</span>
+              <span class="{{#if (gt product.stock 0)}}text-success{{else}}text-danger{{/if}}" style="font-weight: bold;">
                 {{#if (gt product.stock 0)}}{{product.stock}} unidades{{else}}Sin stock{{/if}}
               </span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-              <span style="color: #666;">Categoría:</span>
-              <span style="background: #f0f0f0; padding: 4px 12px; border-radius: 16px; font-size: 0.9rem;">
+            <div class="info-row">
+              <span class="text-muted">Categoría:</span>
+              <span class="badge badge-gray badge-pill" style="font-size: 0.9rem;">
                 {{product.category}}
               </span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-              <span style="color: #666;">Estado:</span>
-              <span style="color: {{#if (gt product.stock 0)}}#48bb78{{else}}#e53e3e{{/if}};">
+            <div class="info-row no-border">
+              <span class="text-muted">Estado:</span>
+              <span class="{{#if (gt product.stock 0)}}text-success{{else}}text-danger{{/if}}">
                 {{#if (gt product.stock 0)}}Disponible{{else}}No disponible{{/if}}
               </span>
             </div>
@@ -38,28 +38,24 @@
         </div>
         
         <div>
-          <h3 style="color: #333; margin-bottom: 1rem;">Agregar al Carrito</h3>
-          <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 8px;">
-            <div style="margin-bottom: 1rem;">
-              <label style="display: block; color: #666; margin-bottom: 0.5rem;">Cantidad:</label>
-              <input type="number" id="quantity" value="1" min="1" max="{{product.stock}}" 
-                     style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+          <h3 class="card-title">Agregar al Carrito</h3>
+          <div class="panel-soft-lg">
+            <div class="mb-1r">
+              <label class="text-muted" style="display:block; margin-bottom:.5rem;">Cantidad:</label>
+              <input type="number" id="quantity" value="1" min="1" max="{{product.stock}}" class="form-control">
             </div>
             {{#if product.status}}
               {{#if (gt product.stock 0)}}
-              <button onclick="addToCart('{{toString product._id}}')" 
-                      style="width: 100%; background: #48bb78; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+              <button onclick="addToCart('{{toString product._id}}')" class="btn btn-success w-100" style="padding:12px; font-size:1.1rem;">
                 🛒 Agregar al Carrito
               </button>
               {{else}}
-              <button disabled 
-                      style="width: 100%; background: #ccc; color: #666; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: not-allowed;">
+              <button disabled class="btn btn-gray w-100" style="padding:12px; font-size:1.1rem;">
                 Sin stock
               </button>
               {{/if}}
             {{else}}
-            <button disabled 
-                    style="width: 100%; background: #ccc; color: #666; border: none; padding: 12px; border-radius: 6px; font-size: 1.1rem; cursor: not-allowed;">
+            <button disabled class="btn btn-gray w-100" style="padding:12px; font-size:1.1rem;">
               No disponible
             </button>
             {{/if}}
@@ -67,9 +63,8 @@
         </div>
       </div>
       
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="/products" 
-           style="background: #667eea; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block;">
+      <div class="center mt-2r">
+        <a href="/products" class="btn-primary" style="text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block;">
           ← Volver al Catálogo
         </a>
       </div>

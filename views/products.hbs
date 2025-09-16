@@ -1,52 +1,50 @@
-<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-  <h1 style="color: #667eea; text-align: center; margin-bottom: 2rem;">🛍️ Catálogo de Productos</h1>
+<div class="container container-wide">
+  <h1 class="page-title mb-2r">🛍️ Catálogo de Productos</h1>
   
-  <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap;">
-    <form method="GET" style="display: flex; gap: 10px; align-items: center;">
-      <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad (true/false)" value="{{query}}" 
-             style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
-      <select name="sort" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+  <div class="mb-2r center">
+    <form method="GET" class="row justify-center">
+      <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad (true/false)" value="{{query}}" class="form-control max-420">
+      <select name="sort" class="form-control max-200">
         <option value="">Sin ordenar</option>
         <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio Ascendente</option>
         <option value="desc" {{#if (eq sort "desc")}}selected{{/if}}>Precio Descendente</option>
       </select>
-      <button type="submit" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+      <button type="submit" class="btn btn-primary">
         Filtrar
       </button>
     </form>
   </div>
 
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <div class="grid-products">
     {{#each products}}
-    <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s;">
-      <div style="padding: 1.5rem;">
-        <h3 style="color: #333; margin-bottom: 0.5rem; font-size: 1.2rem;">{{title}}</h3>
-        <p style="color: #666; margin-bottom: 1rem; font-size: 0.9rem;">{{description}}</p>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <span style="color: #667eea; font-weight: bold; font-size: 1.1rem;">${{price}}</span>
-          <span style="color: #666; font-size: 0.9rem;">Stock: {{stock}}</span>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">{{title}}</h3>
+        <p class="text-muted" style="margin-bottom: 1rem; font-size: 0.9rem;">{{description}}</p>
+        <div class="row-between mb-1r" style="margin-bottom: 1rem;">
+          <span class="price">${{price}}</span>
+          <span class="text-muted" style="font-size: 0.9rem;">Stock: {{stock}}</span>
         </div>
         <div style="margin-bottom: 1rem; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <span style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #666;">
+          <span class="badge badge-gray">
             {{category}}
           </span>
-          <span style="padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: white; background: {{#if (gt stock 0)}}#48bb78{{else}}#e53e3e{{/if}};">
-            {{#if (gt stock 0)}}Disponible{{else}}No disponible{{/if}}
-          </span>
+          {{#if (gt stock 0)}}
+            <span class="badge badge-status available">Disponible</span>
+          {{else}}
+            <span class="badge badge-status unavailable">No disponible</span>
+          {{/if}}
         </div>
         <div style="display: flex; gap: 8px;">
-          <a href="/products/{{toString _id}}" 
-             style="flex: 1; background: #667eea; color: white; text-decoration: none; padding: 8px; text-align: center; border-radius: 6px; font-size: 0.9rem;">
+          <a href="/products/{{toString _id}}" class="btn btn-primary" style="flex:1; text-align:center; font-size:0.9rem; text-decoration:none;">
             Ver Detalles
           </a>
           {{#if (gt stock 0)}}
-            <button onclick="addToCartSession('{{toString _id}}')" 
-                    style="background: #48bb78; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            <button onclick="addToCartSession('{{toString _id}}')" class="btn btn-success btn-sm">
               🛒
             </button>
           {{else}}
-            <button disabled 
-                    style="background: #ccc; color: #666; border: none; padding: 8px 12px; border-radius: 6px; cursor: not-allowed;">
+            <button disabled class="btn btn-gray btn-sm">
               Sin stock
             </button>
           {{/if}}
@@ -57,19 +55,19 @@
   </div>
 
   {{#if (or hasPrevPage hasNextPage)}}
-  <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem;">
+  <div class="pagination">
     {{#if hasPrevPage}}
     <a href="?page={{prevPage}}{{#if query}}&query={{query}}{{/if}}{{#if sort}}&sort={{sort}}{{/if}}" 
-       style="background: #667eea; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px;">
+       class="btn-primary" style="text-decoration:none; padding: 8px 16px; border-radius: 6px;">
       ← Anterior
     </a>
     {{/if}}
     
-    <span style="color: #666;">Página {{currentPage}} de {{totalPages}}</span>
+    <span class="text-muted">Página {{currentPage}} de {{totalPages}}</span>
     
     {{#if hasNextPage}}
     <a href="?page={{nextPage}}{{#if query}}&query={{query}}{{/if}}{{#if sort}}&sort={{sort}}{{/if}}" 
-       style="background: #667eea; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px;">
+       class="btn-primary" style="text-decoration:none; padding: 8px 16px; border-radius: 6px;">
       Siguiente →
     </a>
     {{/if}}

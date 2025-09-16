@@ -14,6 +14,12 @@
         <li><a href="/products" class="nav-link">📦 Catálogo</a></li>
         <li><a href="#" onclick="goToCart()" class="nav-link">🛒 Mi Carrito (<span id="cart-count">0</span>)</a></li>
         <li><a href="/realtimeproducts" class="nav-link">⚡ Tiempo Real</a></li>
+        {{#if user}}
+          <li><a href="/profile" class="nav-link">👤 Perfil</a></li>
+          <li><a href="/logout" class="nav-link">Salir</a></li>
+        {{else}}
+          <li><a href="/login" class="nav-link">Iniciar sesión</a></li>
+        {{/if}}
       </ul>
     </nav>
   </header>

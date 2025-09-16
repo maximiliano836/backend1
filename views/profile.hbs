@@ -1,0 +1,30 @@
+<section class="container narrow">
+  <h1 class="page-title">Perfil</h1>
+  {{#if user}}
+    <div class="mt-1 info-list">
+      <div class="info-row">
+        <strong>Nombre:</strong>
+        <span>{{user.first_name}}</span>
+      </div>
+      <div class="info-row">
+        <strong>Apellido:</strong>
+        <span>{{user.last_name}}</span>
+      </div>
+      <div class="info-row">
+        <strong>Email:</strong>
+        <span>{{user.email}}</span>
+      </div>
+      <div class="info-row">
+        <strong>Edad:</strong>
+        <span>{{user.age}}</span>
+      </div>
+      <div class="info-row no-border">
+        <strong>Rol:</strong>
+        <span>{{user.role}}</span>
+      </div>
+    </div>
+    <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+  {{else}}
+    <div>No logueado</div>
+  {{/if}}
+</section>
